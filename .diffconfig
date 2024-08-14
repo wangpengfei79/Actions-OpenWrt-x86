@@ -1,7 +1,204 @@
 CONFIG_TARGET_x86=y
 CONFIG_TARGET_x86_64=y
 CONFIG_TARGET_x86_64_DEVICE_generic=y
-CONFIG_GRUB_IMAGES=y
+
+#
+# Root filesystem images
+#
+CONFIG_TARGET_ROOTFS_EXT4FS=y
+CONFIG_TARGET_EXT4_RESERVED_PCT=0
+CONFIG_TARGET_EXT4_BLOCKSIZE_4K=y
+# CONFIG_TARGET_EXT4_BLOCKSIZE_2K is not set
+# CONFIG_TARGET_EXT4_BLOCKSIZE_1K is not set
+CONFIG_TARGET_EXT4_BLOCKSIZE=4096
+# CONFIG_TARGET_EXT4_JOURNAL is not set
+# CONFIG_TARGET_ROOTFS_SQUASHFS is not set
+CONFIG_TARGET_UBIFS_FREE_SPACE_FIXUP=y
+CONFIG_TARGET_UBIFS_JOURNAL_SIZE=""
+# CONFIG_GRUB_IMAGES is not set
+CONFIG_GRUB_EFI_IMAGES=y
+CONFIG_GRUB_CONSOLE=y
+CONFIG_GRUB_SERIAL="ttyS0"
+CONFIG_GRUB_BAUDRATE=115200
+# CONFIG_GRUB_FLOWCONTROL is not set
+CONFIG_GRUB_BOOTOPTS=""
+CONFIG_GRUB_TIMEOUT="0"
+CONFIG_GRUB_TITLE="OpenWrt"
+CONFIG_ISO_IMAGES=y
+# CONFIG_QCOW2_IMAGES is not set
+# CONFIG_VDI_IMAGES is not set
+# CONFIG_VMDK_IMAGES is not set
+# CONFIG_VHDX_IMAGES is not set
+CONFIG_TARGET_IMAGES_GZIP=y
+#CONFIG_GRUB_IMAGES=y
+
+CONFIG_DEFAULT_kmod-r8125=y
+CONFIG_DEFAULT_kmod-r8126=y
+CONFIG_DEFAULT_kmod-r8168=y
+
+# Wireless Drivers
+CONFIG_PACKAGE_kmod-iwlwifi=y
+CONFIG_PACKAGE_kmod-rtl8821ae=y
+CONFIG_PACKAGE_kmod-rtl8821cu=y
+# end of Wireless Drivers
+
+#
+# Virtualization
+#
+CONFIG_PACKAGE_kmod-i915-gvt=y
+CONFIG_PACKAGE_kmod-iommu_v2=y
+CONFIG_PACKAGE_kmod-irqbypass=y
+# CONFIG_PACKAGE_kmod-kvm-amd is not set
+CONFIG_PACKAGE_kmod-kvm-intel=y
+CONFIG_PACKAGE_kmod-kvm-x86=y
+CONFIG_PACKAGE_kmod-vfio=y
+CONFIG_PACKAGE_kmod-vfio-mdev=y
+CONFIG_PACKAGE_kmod-vfio-pci=y
+CONFIG_PACKAGE_kmod-vhost=y
+CONFIG_PACKAGE_kmod-vhost-net=y
+# end of Virtualization
+
+#
+#dropbear ssh
+#
+CONFIG_PACKAGE_libpam=y
+CONFIG_DEFAULT_dropbear=y
+CONFIG_PACKAGE_dropbear=y
+CONFIG_DROPBEAR_CURVE25519=y
+# CONFIG_DROPBEAR_ECC is not set
+CONFIG_DROPBEAR_ED25519=y
+CONFIG_DROPBEAR_CHACHA20POLY1305=y
+# CONFIG_DROPBEAR_ZLIB is not set
+CONFIG_DROPBEAR_DBCLIENT=y
+CONFIG_DROPBEAR_SCP=y
+# CONFIG_DROPBEAR_ASKPASS is not set
+# end of dropbear ssh
+
+#docker
+CONFIG_PACKAGE_luci-lib-docker=y
+CONFIG_PACKAGE_luci-app-docker=y
+CONFIG_PACKAGE_luci-app-dockerman=y
+CONFIG_PACKAGE_docker=y
+CONFIG_PACKAGE_docker-compose=y
+CONFIG_PACKAGE_dockerd=y
+
+#
+# Filesystems
+#
+# CONFIG_PACKAGE_kmod-fs-9p is not set
+# CONFIG_PACKAGE_kmod-fs-afs is not set
+# CONFIG_PACKAGE_kmod-fs-autofs4 is not set
+CONFIG_PACKAGE_kmod-fs-btrfs=y
+CONFIG_PACKAGE_kmod-fs-cifs=y
+# CONFIG_PACKAGE_kmod-fs-configfs is not set
+# CONFIG_PACKAGE_kmod-fs-cramfs is not set
+# CONFIG_PACKAGE_kmod-fs-efivarfs is not set
+CONFIG_PACKAGE_kmod-fs-exfat=y
+# CONFIG_PACKAGE_kmod-fs-exportfs is not set
+CONFIG_PACKAGE_kmod-fs-ext4=y
+CONFIG_PACKAGE_kmod-fs-f2fs=y
+# CONFIG_PACKAGE_kmod-fs-fscache is not set
+# CONFIG_PACKAGE_kmod-fs-hfs is not set
+# CONFIG_PACKAGE_kmod-fs-hfsplus is not set
+CONFIG_PACKAGE_kmod-fs-isofs=y
+# CONFIG_PACKAGE_kmod-fs-jfs is not set
+# CONFIG_PACKAGE_kmod-fs-ksmbd is not set
+# CONFIG_PACKAGE_kmod-fs-minix is not set
+CONFIG_PACKAGE_kmod-fs-msdos=y
+# CONFIG_PACKAGE_kmod-fs-netfs is not set
+# CONFIG_PACKAGE_kmod-fs-nfs is not set
+# CONFIG_PACKAGE_kmod-fs-nfs-common is not set
+# CONFIG_PACKAGE_kmod-fs-nfs-common-rpcsec is not set
+# CONFIG_PACKAGE_kmod-fs-nfs-v3 is not set
+# CONFIG_PACKAGE_kmod-fs-nfs-v4 is not set
+# CONFIG_PACKAGE_kmod-fs-nfsd is not set
+# CONFIG_PACKAGE_kmod-fs-ntfs is not set
+CONFIG_PACKAGE_kmod-fs-ntfs3=y
+# CONFIG_PACKAGE_kmod-fs-reiserfs is not set
+CONFIG_PACKAGE_kmod-fs-squashfs=y
+# CONFIG_PACKAGE_kmod-fs-udf is not set
+CONFIG_PACKAGE_kmod-fs-vfat=y
+CONFIG_PACKAGE_kmod-fs-virtiofs=y
+CONFIG_PACKAGE_kmod-fs-xfs is not set
+# CONFIG_PACKAGE_kmod-fuse is not set
+# CONFIG_PACKAGE_kmod-pstore is not set
+# end of Filesystems
+#
+# Filesystem
+#
+# CONFIG_PACKAGE_acl is not set
+# CONFIG_PACKAGE_afuse is not set
+CONFIG_PACKAGE_attr=y
+# CONFIG_PACKAGE_badblocks is not set
+CONFIG_PACKAGE_btrfs-progs=y
+# CONFIG_PACKAGE_chattr is not set
+# CONFIG_PACKAGE_debugfs is not set
+CONFIG_PACKAGE_dosfstools=y
+# CONFIG_PACKAGE_dumpe2fs is not set
+# CONFIG_PACKAGE_e2freefrag is not set
+CONFIG_PACKAGE_e2fsprogs=y
+# CONFIG_PACKAGE_e4crypt is not set
+CONFIG_PACKAGE_exfat-fsck=y
+CONFIG_PACKAGE_exfat-mkfs=y
+# CONFIG_PACKAGE_f2fs-tools is not set
+# CONFIG_PACKAGE_f2fs-tools-selinux is not set
+# CONFIG_PACKAGE_f2fsck is not set
+# CONFIG_PACKAGE_f2fsck-selinux is not set
+# CONFIG_PACKAGE_filefrag is not set
+# CONFIG_PACKAGE_fstrim is not set
+# CONFIG_PACKAGE_fuse-utils is not set
+# CONFIG_PACKAGE_fuse3-utils is not set
+# CONFIG_PACKAGE_hfsfsck is not set
+# CONFIG_PACKAGE_lsattr is not set
+CONFIG_PACKAGE_mkf2fs=y
+# CONFIG_PACKAGE_mkf2fs-selinux is not set
+# CONFIG_PACKAGE_mkhfs is not set
+# CONFIG_PACKAGE_ncdu is not set
+# CONFIG_PACKAGE_nfs-utils is not set
+# CONFIG_PACKAGE_nfs-utils-libs is not set
+# CONFIG_PACKAGE_ntfs-3g is not set
+# CONFIG_PACKAGE_ntfs-3g-low is not set
+# CONFIG_PACKAGE_ntfs-3g-utils is not set
+CONFIG_PACKAGE_ntfs3-mount=y
+# CONFIG_PACKAGE_owfs is not set
+# CONFIG_PACKAGE_owshell is not set
+CONFIG_PACKAGE_resize2fs=y
+CONFIG_PACKAGE_squashfs-tools-mksquashfs=y
+CONFIG_PACKAGE_squashfs-tools-unsquashfs=y
+CONFIG_PACKAGE_swap-utils=y
+CONFIG_PACKAGE_sysfsutils=y
+# CONFIG_PACKAGE_tune2fs is not set
+CONFIG_PACKAGE_xfs-admin=y
+CONFIG_PACKAGE_xfs-fsck=y
+CONFIG_PACKAGE_xfs-growfs=y
+CONFIG_PACKAGE_xfs-mkfs=y
+CONFIG_PACKAGE_lvm2=y
+CONFIG_PACKAGE_libparted=y
+CONFIG_PACKAGE_parted=y
+CONFIG_PACKAGE_lsblk=y
+CONFIG_PACKAGE_mdadm=y
+CONFIG_PACKAGE_hdparm=y
+CONFIG_PACKAGE_mtools=y
+CONFIG_PACKAGE_luci-app-diskman=y
+CONFIG_PACKAGE_luci-app-diskman_INCLUDE_btrfs_progs=y
+CONFIG_PACKAGE_luci-app-diskman_INCLUDE_lsblk=y
+CONFIG_PACKAGE_luci-app-diskman_INCLUDE_mdadm=y
+# end of Filesystem
+CONFIG_PACKAGE_nano=y
+#
+# Configuration
+#
+CONFIG_SCHROOT_BTRFS=y
+CONFIG_SCHROOT_LOOPBACK=y
+CONFIG_SCHROOT_LVM=y
+CONFIG_SCHROOT_UUID=y
+# end of Configuration
+
+CONFIG_PACKAGE_ttyd=y
+CONFIG_PACKAGE_luci-app-ttyd=y
+CONFIG_PACKAGE_tmux=y
+
+
 # CONFIG_LIBCURL_UNIX_SOCKETS is not set
 CONFIG_PACKAGE_6in4=y
 # CONFIG_PACKAGE_adbyby is not set
