@@ -26,21 +26,26 @@ touch wget/DISTRIB_REVISION1
 touch wget/DISTRIB_REVISION3
 touch files/usr/share/Check_Update.sh
 touch files/usr/share/Lenyu-auto.sh
+touch files/usr/share/Lenyu-pw.sh
 
 # backup config
-cat>> package/base-files/files/lib/upgrade/keep.d/base-files-essential<<-EOF
+cat>>/etc/sysupgrade.conf<<-EOF
 /etc/config/dhcp
 /etc/config/sing-box
 /etc/config/romupdate
 /etc/config/passwall_show
 /etc/config/passwall_server
 /etc/config/passwall
-/usr/share/v2ray/geosite.dat
-/usr/share/v2ray/geoip.dat
 /usr/share/passwall/rules/
 /usr/share/singbox/
 /usr/share/v2ray/
 /etc/openclash/core/
+/usr/bin/chinadns-ng
+/usr/bin/sing-box
+/usr/bin/hysteria
+/usr/bin/xray
+/usr/share/v2ray/geoip.dat
+/usr/share/v2ray/geosite.dat
 EOF
 
 
@@ -132,6 +137,17 @@ if [ $? != 0 ]; then
 	exit 0
 	EOF
 fi
+
+grep "Lenyu-pw.sh"  package/lean/default-settings/files/zzz-default-settings
+if [ $? != 0 ]; then
+	sed -i 's/exit 0/ /'  package/lean/default-settings/files/zzz-default-settings
+	cat>> package/lean/default-settings/files/zzz-default-settings<<-EOF
+	sed -i '$ a alias lenyu-pw="sh /usr/share/Lenyu-pw.sh"' /etc/profile
+	chmod 755 /etc/init.d/romupdate
+	exit 0
+	EOF
+fi
+
 grep "xray_backup"  package/lean/default-settings/files/zzz-default-settings
 if [ $? != 0 ]; then
 	sed -i 's/exit 0/ /'  package/lean/default-settings/files/zzz-default-settings
@@ -243,11 +259,9 @@ case $num1 in
 	echo
 	sleep 3
 	if [ ! -d /sys/firmware/efi ];then
-		gzip -d openwrt_x86-64-${new_version}_dev_Lenyu.img.gz
-		sysupgrade /tmp/openwrt_x86-64-${new_version}_dev_Lenyu.img
+		sysupgrade /tmp/openwrt_x86-64-${new_version}_dev_Lenyu.img.gz		
 	else
-		gzip -d openwrt_x86-64-${new_version}_uefi-gpt_dev_Lenyu.img.gz
-		sysupgrade /tmp/openwrt_x86-64-${new_version}_uefi-gpt_dev_Lenyu.img
+		sysupgrade /tmp/openwrt_x86-64-${new_version}_uefi-gpt_dev_Lenyu.img.gz
 	fi
     ;;
     n|N)
@@ -256,11 +270,9 @@ case $num1 in
     echo
     sleep 3
 	if [ ! -d /sys/firmware/efi ];then
-		gzip -d openwrt_x86-64-${new_version}_dev_Lenyu.img.gz
-		sysupgrade -n  /tmp/openwrt_x86-64-${new_version}_dev_Lenyu.img
+		sysupgrade -n  /tmp/openwrt_x86-64-${new_version}_dev_Lenyu.img.gz
 	else
-		gzip -d openwrt_x86-64-${new_version}_uefi-gpt_dev_Lenyu.img.gz
-		sysupgrade -n  /tmp/openwrt_x86-64-${new_version}_uefi-gpt_dev_Lenyu.img
+		sysupgrade -n  /tmp/openwrt_x86-64-${new_version}_uefi-gpt_dev_Lenyu.img.gz
 	fi
     ;;
     *)
@@ -342,12 +354,6 @@ fi
 Firmware_Type="$(grep 'DISTRIB_ARCH=' /etc/openwrt_release | cut -d \' -f 2)"
 echo $Firmware_Type > /etc/lenyu_firmware_type
 echo
-if [[ "$cloud_kernel" =~ "4.19" ]]; then
-	echo
-	echo -e "\033[31m 该脚本在Lenyu固件Sta版本上运行，目前只建议在Dev版本上运行，准备退出… \033[0m"
-	echo
-	exit 0
-fi
 #md5值验证，固件类型判断
 if [ ! -d /sys/firmware/efi ];then
 	if [ "$current_version" != "$cloud_version" ];then
@@ -359,8 +365,7 @@ if [ ! -d /sys/firmware/efi ];then
 		  sleep 4
 		  exit
 		fi
-		gzip -d /tmp/openwrt_x86-64-${new_version}_dev_Lenyu.img.gz
-		sysupgrade /tmp/openwrt_x86-64-${new_version}_dev_Lenyu.img
+		sysupgrade /tmp/openwrt_x86-64-${new_version}_dev_Lenyu.img.gz
 	else
 		echo -e "\033[32m 本地已经是最新版本，还更个鸡巴毛啊… \033[0m"
 		echo
@@ -376,8 +381,7 @@ else
 			sleep 1
 			exit
 		fi
-		gzip -d /tmp/openwrt_x86-64-${new_version}_uefi-gpt_dev_Lenyu.img.gz
-		sysupgrade /tmp/openwrt_x86-64-${new_version}_uefi-gpt_dev_Lenyu.img
+		sysupgrade /tmp/openwrt_x86-64-${new_version}_uefi-gpt_dev_Lenyu.img.gz
 	else
 		echo -e "\033[32m 本地已经是最新版本，还更个鸡巴毛啊… \033[0m"
 		echo
@@ -386,6 +390,121 @@ else
 fi
 
 exit 0
+EOF
+
+cat>files/usr/share/Lenyu-pw.sh<<-\EOF
+#!/bin/sh
+# Define variables
+TEMP_DIR="/tmp/test"
+PSVERSION_FILE="/usr/share/psversion"
+UNZIP_URL="https://downloads.openwrt.org/releases/packages-23.05/x86_64/packages/unzip_6.0-8_x86_64.ipk"
+UNZIP_PACKAGE="unzip_6.0-8_x86_64.ipk"
+RED='\033[0;31m'    # Red color
+BLUE='\033[0;34m'   # Blue color
+ORANGE='\033[0;33m' # Orange color
+NC='\033[0m'        # No Color (reset)
+
+# Echo message in red color
+echo_red() {
+  echo -e "${RED}$1${NC}"
+}
+
+# Echo message in blue color
+echo_blue() {
+  echo -e "${BLUE}$1${NC}"
+}
+
+# Echo message in orange color
+echo_orange() {
+  echo -e "${ORANGE}$1${NC}"
+}
+
+# Preparing for update (blue message)
+echo_blue "正在做更新前的准备工作..."
+# 检查 unzip 是否已安装
+if opkg list-installed | grep -q unzip; then
+    echo "unzip 已经安装，跳过安装步骤。"
+else
+    # 下载 unzip 包
+    echo "开始下载 unzip 包..."
+    wget -q --show-progress "$UNZIP_URL" -O "$UNZIP_PACKAGE"
+
+    # 检查下载是否成功
+    if [ $? -eq 0 ]; then
+        echo "下载成功，开始安装 unzip 包..."
+        opkg install "$UNZIP_PACKAGE"
+        
+        # 检查安装是否成功
+        if [ $? -eq 0 ]; then
+            echo "unzip 安装成功！"
+        else
+            echo "unzip 安装失败！"
+        fi
+    else
+        echo "unzip 下载失败！"
+    fi
+fi
+# Create temporary directory
+mkdir -p "$TEMP_DIR"
+
+# Get the latest release information from GitHub
+latest_release=$(curl -s https://api.github.com/repos/xiaorouji/openwrt-passwall/releases/latest)
+
+# Extract version number from GitHub release
+version=$(echo "$latest_release" | grep '"tag_name":' | sed -E 's/.*"tag_name": "([^"]+)".*/\1/')
+
+# Extract download URLs
+luci_app_passwall_url=$(echo "$latest_release" | grep -o '"browser_download_url": "[^"]*luci-23.05_luci-app-passwall_[^"]*"' | sed -E 's/.*"browser_download_url": "([^"]+)".*/\1/')
+luci_i18n_passwall_url=$(echo "$latest_release" | grep -o '"browser_download_url": "[^"]*luci-23.05_luci-i18n-passwall-zh-cn_[^"]*"' | sed -E 's/.*"browser_download_url": "([^"]+)".*/\1/')
+
+# Get installed version from the system and save to psversion file
+opkg list-installed | grep luci-app-passwall | awk '{print $3}' > "$PSVERSION_FILE"
+installed_version=$(cat "$PSVERSION_FILE" 2>/dev/null)
+
+# Check if the version is already up to date
+if [ "$installed_version" = "$version" ]; then
+  echo_red "已经是最新版本，还更新个鸡毛啊！"
+  exit 0
+fi
+
+# If versions do not match, prompt user for confirmation with a 10-second countdown
+echo_orange "你即将更新passwall为最新版本：$version，确定更新吗？(y/n,回车默认y，10秒后自动执行y)"
+read -t 10 -r confirmation
+confirmation=${confirmation:-y}
+
+if [ "$confirmation" != "y" ]; then
+  echo_blue "已取消更新。"
+  exit 0
+fi
+
+# If user confirms, continue with the update
+echo_blue "新版本可用，开始更新..."
+
+# Download files to the temporary directory
+wget -O "$TEMP_DIR/luci-23.05_luci-app-passwall_${version}_all.ipk" "$luci_app_passwall_url"
+wget -O "$TEMP_DIR/luci-23.05_luci-i18n-passwall-zh-cn_${version}_all.ipk" "$luci_i18n_passwall_url"
+sleep 5
+echo "下载完成:"
+echo "$TEMP_DIR/luci-23.05_luci-app-passwall_${version}_all.ipk"
+echo "$TEMP_DIR/luci-23.05_luci-i18n-passwall-zh-cn_${version}_all.ipk"
+
+# Install the downloaded IPK files
+opkg install "$TEMP_DIR/luci-23.05_luci-app-passwall_${version}_all.ipk"
+opkg install "$TEMP_DIR/luci-23.05_luci-i18n-passwall-zh-cn_${version}_all.ipk"
+
+# Restart the passwall service
+/etc/init.d/passwall restart
+
+# Update the version file with the new version
+echo "$version" > "$PSVERSION_FILE"
+
+echo_blue "插件已安装并且passwall服务已重启。"
+
+# Clean up
+rm -rf $TEMP_DIR
+
+exit 0
+
 EOF
 
 
